@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Start Chat Session{% endblock title %}
+{% block head%}
+{% endblock head %}
+{% block content %}
+    {% include 'navbar.html' %}
+    <div class="container my-4">
+
+    <p class="font-weight-bold">Starting a new chatting session.
+    </p>
+    <p><strong>Detailed documentation and more examples you can find in our <a
+        href="#" target="_blank">FAQ</a> </p>
+
+    <hr class="mt-5">
+
+    <p>Built with <a target="_blank" href="#">Material Design for Bootstrap</a> - free and powerful Bootstrap UI KIT</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary me-2">Start Chatting <i class="far fa-comment-alt"></i></button>
+        {% if message %}
+            <br/>
+            <code>{{message}}</code>
+        {% endif %}
+    </form>
+    <hr class="mb-5"/>
+
+    <p class="font-weight-bold">Example</p>
+
+    <p>Add <code>d-flex align-items-center justify-content-center</code> classes to the parent element to center its
+    content vertically and horizontally.</p>
+    
+   
+        
+    <div class="border border-light p-3 mb-4">
+
+        <div class="d-flex align-items-center justify-content-center" style="height: 350px">
+            <div class="p-2 bd-highlight col-example">Flex item</div>
+            <div class="p-2 bd-highlight col-example">Flex item</div>
+            <div class="p-2 bd-highlight col-example">Flex item</div>
+        </div>
+
+    </div>
+
+    </div>
+
+{% endblock content %}
+{% block scripts %}
+
+{% endblock scripts %}

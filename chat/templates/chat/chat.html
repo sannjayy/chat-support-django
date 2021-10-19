@@ -7,8 +7,14 @@
 {% block content %}
 <header class="page-header">
     <div class="container ">
-        <h2>qSupport</h2>
-        
+        <h4>qSupport <a href="{% url 'chat:end_chat' session.session %}" title="End this conversation"  onClick="return confirm('are you sure you want to close this conversation?');"><i class="far fa-window-close" style="color:#f74d4d"></i></a></h4>
+        <small>
+            {% if user.is_staff %}
+                <p>Chatting with : {{session.user.nickname}}</p>
+            {% else %}
+                <p>Chatting with : {{session.agent.nickname}}</p>
+            {% endif %}
+        </small>
     </div>
 </header>
 <div class="main">
@@ -46,12 +52,16 @@
 {% block scripts %}
 <script>
 $(document).ready(function(){
+    const url = window.location.href
+    const text = url.match(/\w+/g)
+    const session_id = text[text.length - 1];
+
     setInterval(function(){
         $.ajax({
             type: 'GET',
-            url : "/chat/getMessages/",
+            url : "/chat/getMessages/"+session_id,
             success: function(response){
-                console.log(response);
+                //console.log(response);
                 $("#display").empty();
                 for (var key in response.messages)
                 {
@@ -67,6 +77,8 @@ $(document).ready(function(){
                 alert('An error occured')
             }
         });
+        window.scrollTo(0,document.body.scrollHeight);
+
     }, 1000);
 })
 </script>
@@ -79,11 +91,13 @@ $(document).ready(function(){
       url:'/chat/sendMessage',
       data:{
             message:$('#message').val(),
+            url: window.location.href,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
       },
       success: function(data){
+        window.scrollTo(0,document.body.scrollHeight);
          //alert(data)
-            console.log(data)
+        //console.log(data)
       }
     });
     document.getElementById('message').value = ''

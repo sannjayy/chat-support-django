@@ -57,13 +57,19 @@
     <div class="mask" style="background-color: rgba(0, 0, 0, 0.7);">
       <div class="d-flex justify-content-center align-items-center h-100">
         <div class="text-white">
-          <h1 class="mb-3">Learn Bootstrap 5 with MDB</h1>
-          <h5 class="mb-4">Best & free guide of responsive web design</h5>
+          <h1 class="mb-3">General Help Center</h1>
+          <h5 class="mb-4">Welcome back, {{user.nickname|title}}</h5>
           <a 
             class="btn btn-outline-light btn-lg m-2"
-            href="{% url 'chat:start_chat' %}"
+            href="{% url 'chat:chat_session_start' %}"
             role="button"
             >Start Chat with Us</a>
+          {% comment %} <a 
+            class="btn btn-outline-light btn-lg m-2"
+            type="button"  
+            data-mdb-toggle="modal"
+            data-mdb-target="#staticBackdrop"
+            >Start Chat with Us</a> {% endcomment %}
           {% comment %} <a
                   class="btn btn-outline-light btn-lg m-2"
                   href="{% url 'core:login' %}"
