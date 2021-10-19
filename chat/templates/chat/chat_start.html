@@ -15,15 +15,20 @@
     <hr class="mt-5">
 
     <p>Built with <a target="_blank" href="#">Material Design for Bootstrap</a> - free and powerful Bootstrap UI KIT</p>
-    <form method="post">
+    
+    {% if not user.is_staff %}
+        <form method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-primary me-2">Start Chatting <i class="far fa-comment-alt"></i></button>
-        {% if message %}
-            <br/>
-            <code>{{message}}</code>
-        {% endif %}
-    </form>
-    <hr class="mb-5"/>
+            <button type="submit" class="btn btn-primary me-2">Start Chatting <i class="far fa-comment-alt"></i></button>
+            {% if message %}
+                <br/>
+                <code>{{message}}</code>
+            {% endif %}
+        </form>
+        <hr class="mb-5"/>
+    {% endif %}
+        
+    
 
     <p class="font-weight-bold">Example</p>
 

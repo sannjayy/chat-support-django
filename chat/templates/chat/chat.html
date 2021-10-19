@@ -44,12 +44,27 @@
                     <button type="submit" class="btn btn-success btn-block">Send</button>
                 </div>
             </div>
+            
+            {% if user.is_staff %}
+            <div class="row">
+                {% for msg in chat_templates %}
+                <div class="col-sm-2 m-3" style="border:1px solid gray; border-radius:50px">
+                   <a href="#!" onclick="copyText('{{msg}}')">{{msg|truncatewords:'5'}}</a>
+                </div>
+                {% endfor %}                
+            </div>
+            {% endif %}
         </form>
     </div>
 </div>
 
 {% endblock content %}
 {% block scripts %}
+<script>
+const copyText = (txt) => {
+    $('#message').val(txt)
+}
+</script>
 <script>
 $(document).ready(function(){
     const url = window.location.href

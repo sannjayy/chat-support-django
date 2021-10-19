@@ -5,6 +5,81 @@
 
 {% block content %}
     {% include 'navbar.html' %}
-    {% include 'components/header.html' %}
+    <div class="container-fluid mt-5" style="margin-bottom:20%">
+        <div class="row">
+            <div class="col-md-5 m-2" style="border:1px solid #d9cfcf; padding:10px;">
+                <h6 class="text-center mt-2">Chat Request</h6>
+                <hr/>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">User</th>
+                            <th scope="col">Created</th>
+                            <th scope="col">Handle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    
+                    {% if chat_sessions %}                   
+                        
+                        {% for chat in chat_sessions %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td><a href="{% url 'chat:chat_view' chat.session %}">{{chat.user}}</a></td>
+                                <td>{{chat.created_at|timesince}} ago</td>
+                                <td>
+                                    <a href="{% url 'chat:end_chat' chat.session %}" title="End this conversation" onClick="return confirm('are you sure you want to close this conversation?');">End Chat</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <th colspan="5">No chat requests for you</th>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6 m-2" style="border:1px solid #d9cfcf; padding:10px">
+                <h6 class="text-center mt-2">Quick Chat Snippets</h6>
+                <hr/>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Message</th>
+                            <th scope="col">Created</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    
+                    {% if chat_templates %}                   
+                        
+                        {% for data in chat_templates %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{data.message}}</td>
+                                <td>{{data.created_at|date}}</td>
+                                <td>
+                                    {% if data.status %}
+                                        Active
+                                    {% else %}
+                                        Deactive
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <th colspan="5">No chat requests for you</th>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
     {% include 'components/footer.html' %}
 {% endblock content %}

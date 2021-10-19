@@ -7,9 +7,21 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
-
+from chat.models import Chat, ChatSession, ChatTemplate
 class HomePage(TemplateView):
     template_name = "core/home.html"
+
+
+
+def DashboardView(request):
+    chat_templates = ChatTemplate.objects.filter(user = request.user)
+    chat_sessions = ChatSession.objects.filter(agent = request.user, is_closed=False)
+
+    context = {
+        'chat_templates': chat_templates,
+        'chat_sessions': chat_sessions,
+    }
+    return render(request, 'core/dashboard.html', context)
 
 
 # Authentication

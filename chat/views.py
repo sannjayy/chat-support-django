@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
-from .models import Chat, ChatSession
+from .models import Chat, ChatSession, ChatTemplate
 from core.models import User
 import time
 
@@ -13,10 +13,12 @@ import time
 @login_required
 def chat_view(request, id):
     # session = get_object_or_404(ChatSession, session=id)
+    chat_templates = ChatTemplate.objects.filter(user=request.user)
+    print(chat_templates)
     try:
         session = ChatSession.objects.get(session=id, is_closed=False)
         if session:
-            return render(request, 'chat/chat.html', context={'session':session})
+            return render(request, 'chat/chat.html', context={'session':session, 'chat_templates':chat_templates})
     except:
         return HttpResponse('Chat session has been expired!')
 
@@ -28,6 +30,8 @@ def end_chat_view(request, id):
         session = ChatSession.objects.get(session=id, is_closed=False)
         session.is_closed=True
         session.save()
+        if session and request.user.is_staff:
+            return redirect('core:dashboard')
         if session:
             return redirect('core:home')
     except:
@@ -35,7 +39,7 @@ def end_chat_view(request, id):
 
 @login_required
 def chat_session_start(request):
-    if request.method == 'POST':
+    if request.method == 'POST' and not request.user.is_staff:
         # Find a available Agenet
         agent = User.objects.filter(is_available=True, is_staff=True).order_by('?').first()
         # print(agent)
@@ -69,6 +73,7 @@ def SendAPIView(request):
         new_message.save()
         time.sleep(0.5)
     return HttpResponse('Message sent successfully')
+
 
 @login_required
 def GetMessagesView(request, id):

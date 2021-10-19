@@ -43,3 +43,6 @@ class ChatTemplate(models.Model):
     message = models.TextField()
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.message
