@@ -25,7 +25,7 @@ class User(AbstractUser):
     @property
     def nickname(self):
         if self.first_name:
-            return self.first_name
+            return self.first_name + ' ' + self.last_name
         return self.username
         
     

@@ -48,13 +48,8 @@ class Chat(models.Model):
 
         if diff.days == 0 and diff.seconds >= 0 and diff.seconds < 60:
             seconds= diff.seconds
-            if seconds == 1:
-                # return str(seconds) +  "second ago"
-                return "few seconds ago"
-            else:
-                # return str(seconds) + " seconds ago"
-                return "few seconds ago"
-
+            # return str(seconds) +  "second ago"
+            return "few seconds ago"
         if diff.days == 0 and diff.seconds >= 60 and diff.seconds < 3600:
             minutes= math.floor(diff.seconds/60)
             if minutes == 1:

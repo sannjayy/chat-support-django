@@ -81,7 +81,7 @@ def agent_join_chat_view(request, id):
                 sender = request.user,
                 receiver_id = session.user_id,
                 session = session,
-                message = f'Hello, My name is {request.user.nickname}, How may I help you today?', 
+                message = f'Hello, I\'m {request.user.nickname}, how may I help you today?', 
             )
             return redirect('chat:chat_view', id=session.session)
     except:
