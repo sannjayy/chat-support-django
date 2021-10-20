@@ -7,6 +7,8 @@ import uuid
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     is_email_verified = models.BooleanField(default=False)
+    mobile = models.CharField(max_length=15, verbose_name="Mobile number", null=True, blank=True)
+    whatsapp = models.CharField(max_length=15, verbose_name="Whatsapp number", null=True, blank=True)
     is_available = models.BooleanField(default=False)
     
 

@@ -1,3 +1,4 @@
+{% load static %}
 <header>
   <!-- Intro settings -->
   <style>
@@ -52,21 +53,31 @@
   <div
           id="intro-example"
           class="p-5 text-center bg-image"
-          style="background-image: url('https://mdbootstrap.com/img/new/slides/041.jpg');"
+          style="background-image: url('{% static 'assets/img/bg.jpg' %}');"
   >
     <div class="mask" style="background-color: rgba(0, 0, 0, 0.7);">
       <div class="d-flex justify-content-center align-items-center h-100">
         <div class="text-white">
           <h1 class="mb-3">General Help Center</h1>
-          <h5 class="mb-4">Welcome back, {{user.nickname}}</h5>
+          
+          {% if user.is_authenticated %}
+              <h5 class="mb-4">Hey, {{user.nickname}}</h5>
+          {% endif %}
           
             {% if not user.is_staff %}
                <a 
                 class="btn btn-outline-light btn-lg m-2"
                 href="{% url 'chat:chat_session_start' %}"
                 role="button"
-                >Start Chat with Us</a>
+                >Need Support ?</a>
             {% else %}
+
+                <a 
+                class="btn btn-outline-secondary btn-lg m-2"
+                href="{% url 'core:dashboard' %}"
+                role="button"
+                >Open Dashboard</a>
+                <br/>
                 <code>This is an agent profile!</code>
             {% endif %}
               

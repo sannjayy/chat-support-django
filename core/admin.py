@@ -23,13 +23,12 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ('is_email_verified', 'is_active', 'is_staff', 'is_superuser')
     fieldsets = (
         ('User Credentials', {'fields': ('email', 'is_email_verified', 'username', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name',)}),
-        
+        ('Personal info', {'fields': ('first_name', 'last_name','mobile', 'whatsapp',)}),
         ('Permissions', {'fields': ('is_available', 'is_active', 'is_staff', 'is_superuser', 'groups')}), # 'user_permissions', 'groups'
     )
     # Creating new user from admin
     add_fieldsets = (
-        ('User Information', {'classes': ('wide',), 'fields': ('first_name', 'last_name', 'email', 'username', 'password1', 'password2',)}),
+        ('User Information', {'classes': ('wide',), 'fields': ('first_name', 'last_name', 'mobile', 'whatsapp', 'email', 'username', 'password1', 'password2',)}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
         
     )

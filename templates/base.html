@@ -17,11 +17,19 @@
         <!-- MDB -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+        <link rel="icon" href="{% static 'assets/img/favicon.png' %}" type="image/png">
         <title>{% block title %}{% endblock title %}</title>
         {% block head %}{% endblock head %}
         
     </head>
-    <body>        
+    <body>    
+        {% if messages %}
+            {% for message in  messages %}
+                <div class="alert alert-{{message.tags}}" role="alert">
+                {{message}}
+                </div>
+            {% endfor %}
+        {% endif %}      
         {% block content %}{% endblock content %}
 
         <!-- Optional JavaScript; choose one of the two! -->
@@ -37,5 +45,59 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
         -->
         {% block scripts %}{% endblock scripts %}
+
+        <script>
+        $(document).ready(function(){
+            const src = "{% static 'assets/sound/notification.wav' %}";            
+            var audio = new Audio(src);
+
+            setInterval(function(){
+                $.ajax({
+                    type: 'GET',
+                    url : "/chat/getNotification",
+                    success: function(response){
+                        $("#display_notifications").empty();
+                        let count = 0;
+                        for (var key in response.notifications)
+                        {
+                            var temp = "<li><a class='dropdown-item' href='{% url 'core:dashboard' %}'>New chat request</a></li>"
+                            $("#display_notifications").append(temp);
+                            count = count + 1;
+                        }
+                        //console.log(count);
+                        
+                        //audio.loop = false;                        
+                        
+
+                        //console.log(last_notif)
+                        //console.log(count)
+                        {% if user.is_staff %}
+                            const last_notif = window.localStorage.getItem('notification');
+                            if (last_notif < count){
+                                //console.log('alert')
+                                audio.play();
+                            }
+                        {% endif %}
+
+                        //audio.play();
+                        if (count < 1){
+                            //console.log('if part')
+                            $("#number_of_notificaion").hide();
+                            window.localStorage.setItem("notification", 0);
+                        } else {
+                            //console.log('else part')                            
+                            $("#number_of_notificaion").show();
+                            $("#number_of_notificaion").text(count);
+                            window.localStorage.setItem("notification", count);
+                        }
+                    },
+                    error: function(response){
+                        alert('An error occured')
+                    }
+                });
+
+            }, 1500);
+        })
+        </script>
     </body>
 </html>

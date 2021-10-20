@@ -7,6 +7,21 @@
     {% include 'navbar.html' %}
     <div class="container-fluid mt-5" style="margin-bottom:20%">
         <div class="row">
+            <div class="col-md-12" style="border:1px solid #d9cfcf; padding:10px;margin-right:10px;">
+                <div class="col-2">
+                    {% if user.is_available %}
+                    <a href="{% url 'core:change_visibility_status' %}">                        
+                        <label class="btn btn-success" for="success-outlined">Avaiable</label>
+                    </a>
+                    {% else %}
+                    <a href="{% url 'core:change_visibility_status' %}">       
+                        <label class="btn btn-danger" for="danger-outlined">Busy</label>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        <div>
+        <div class="row">
             <div class="col-md-5 m-2" style="border:1px solid #d9cfcf; padding:10px;">
                 <h6 class="text-center mt-2">Chat Request</h6>
                 <hr/>
@@ -15,7 +30,8 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">User</th>
-                            <th scope="col">Created</th>
+                            <th scope="col">Agent</th>
+                            <th scope="col">Joined</th>
                             <th scope="col">Handle</th>
                         </tr>
                     </thead>
@@ -23,34 +39,55 @@
                     
                     {% if chat_sessions %}                   
                         
-                        {% for chat in chat_sessions %}
+                        {% for chat in chat_sessions %}  
+                                
                             <tr>
                                 <th scope="row">{{ forloop.counter }}</th>
-                                <td><a href="{% url 'chat:chat_view' chat.session %}">{{chat.user}}</a></td>
+                                <td><a href="{% url 'chat:chat_view' chat.session %}">{{chat.user.nickname}}</a></td>
+                                <td>
+                                {% if chat.agent.nickname %}
+                                    {{chat.agent.nickname}} 
+                                {% else %}
+                                    Not Assigned
+                                {% endif %}
+                                    </td>
                                 <td>{{chat.created_at|timesince}} ago</td>
                                 <td>
-                                    <a href="{% url 'chat:end_chat' chat.session %}" title="End this conversation" onClick="return confirm('are you sure you want to close this conversation?');">End Chat</a>
+                                    
+                                    {% if user.is_available and not chat.is_agent_joined %}
+                                        <a href="{% url 'chat:agent_join_chat' chat.session %}" class="btn btn-success" title="Join this conversation" >Accept &nbsp<i class="fas fa-check"></i></a>
+
+                                        <a href="{% url 'chat:end_chat' chat.session %}" class="btn btn-danger" title="End this conversation" onClick="return confirm('are you sure you want to reject this chat?');">Reject &nbsp<i class="fas fa-times"></i></a>
+                                    {% endif %}
+                                        
+                                    {% if chat.is_agent_joined and chat.agent == user %}
+                                        <a href="{% url 'chat:end_chat' chat.session %}" class="btn btn-outline-danger" title="End this conversation" onClick="return confirm('are you sure you want to close this conversation?');">End Chat</a>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                    
                                 </td>
                             </tr>
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <th colspan="5">No chat requests for you</th>
+                            <th colspan="5" class="text-center">No chat requests for you</th>
                         </tr>
                     {% endif %}
                     </tbody>
                 </table>
             </div>
             <div class="col-md-6 m-2" style="border:1px solid #d9cfcf; padding:10px">
-                <h6 class="text-center mt-2">Quick Chat Snippets</h6>
+                <h6 class="text-center mt-2">Quick Chat Snippets</h6> 
                 <hr/>
+                <a href="{% url 'chat:add_chat_template' %}" class="btn btn-outline-primary">Add</a>
                 <table class="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Message</th>
                             <th scope="col">Created</th>
-                            <th scope="col">Status</th>
+                            <th scope="col">Handle</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -63,17 +100,25 @@
                                 <td>{{data.message}}</td>
                                 <td>{{data.created_at|date}}</td>
                                 <td>
-                                    {% if data.status %}
-                                        Active
+                                    {% if data.status %}                                        
+                                        <a href="{% url 'chat:change_template_status' data.id %}" title="Active">
+                                            <i class="fas fa-toggle-on" style="color:green; font-size:23px"></i>
+                                        </a>
                                     {% else %}
-                                        Deactive
+                                        <a href="{% url 'chat:change_template_status' data.id %}" title="Deactive">
+                                            <i class="fas fa-toggle-off" style="font-size:23px"></i>
+                                        </a>
                                     {% endif %}
+                                    
+                                    <a href="{% url 'chat:delete_chat_template' data.id %}" title="Delete" onClick="return confirm('are you sure you want to delete this template?');">
+                                        <i class="fas fa-trash-alt" style="margin-left:10px;color:red; font-size:20px"></i>
+                                    </a>
                                 </td>
                             </tr>
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <th colspan="5">No chat requests for you</th>
+                            <th colspan="5" class="text-center"><code>No Data</code></th>
                         </tr>
                     {% endif %}
                     </tbody>
@@ -81,5 +126,6 @@
             </div>
         </div>
     </div>
-    {% include 'components/footer.html' %}
+    {% comment %} {% include 'components/footer.html' %} {% endcomment %}
 {% endblock content %}
+

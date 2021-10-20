@@ -10,20 +10,36 @@
         <h4>qSupport <a href="{% url 'chat:end_chat' session.session %}" title="End this conversation"  onClick="return confirm('are you sure you want to close this conversation?');"><i class="far fa-window-close" style="color:#f74d4d"></i></a></h4>
         <small>
             {% if user.is_staff %}
-                <p>Chatting with : {{session.user.nickname}}</p>
-            {% else %}
-                <p>Chatting with : {{session.agent.nickname}}</p>
+                <p>Chatting with : {{session.user.nickname}}
+                    
+                    {% if session.user.mobile %}
+                        | {{session.user.mobile}} (Mobile)
+                    {% endif %}
+                    {% if  session.user.whatsapp %}
+                        | {{session.user.whatsapp}} (WhatsApp)
+                    {% endif %}
+                                              
+                </p>
+            {% comment %} {% else %} {% endcomment %}
             {% endif %}
         </small>
     </div>
 </header>
 <div class="main">
     <div class="container ">
+        {% if not user.is_staff %}
+            {% if not session.agent %}
+                <p style="text-align:center; border:1px solid #8eb98e; width:50%; margin:0 auto;color: #787373;border-radius: 40px;">Please wait while we connect you to the next available agent...</p>
+            {% else %}
+                <p style="text-align:center; border:1px solid #8eb98e; width:50%; margin:0 auto;color: #787373;border-radius: 40px;">You are chatting with {{session.agent.nickname}}</p>
+            {% endif %}
+        {% endif %}
         <div class="chat-log" id="display">
             {% comment %} <div class="chat-log__item">
                 <h3 class="chat-log__author">Felipe <small>14:30</small></h3>
                 <div class="chat-log__message">Yo man</div>
-            </div>
+            </div> {% endcomment %}
+             {% comment %} 
             <div class="chat-log__item chat-log__item--own">
                 <h3 class="chat-log__author">Fabrício <small>14:30</small></h3>
                 <div class="chat-log__message">BRB</div>
@@ -39,6 +55,7 @@
             <div class="row">
                 <div class="col-sm-10 col-xs-8">
                     <input type="text" class="form-control" name="message" id="message" placeholder="Message" />
+                    {% comment %} <textarea name="message" id="message" class="form-control" placeholder="Message" cols="10" rows="1"></textarea> {% endcomment %}
                 </div>
                 <div class="col-sm-2 col-xs-4">
                     <button type="submit" class="btn btn-success btn-block">Send</button>
@@ -48,8 +65,8 @@
             {% if user.is_staff %}
             <div class="row">
                 {% for msg in chat_templates %}
-                <div class="col-sm-2 m-3" style="border:1px solid gray; border-radius:50px">
-                   <a href="#!" onclick="copyText('{{msg}}')">{{msg|truncatewords:'5'}}</a>
+                <div class="col-sm-2 m-3" style="text-align:center; border:1px solid #8eb98e;padding: 5px; border-radius: 40px; font-size:14px">
+                   <a href="#!" onclick="copyText('{{msg|linebreaks}}')" style="color: #443939;">{{msg|truncatewords:'3'}}</a>
                 </div>
                 {% endfor %}                
             </div>
@@ -63,6 +80,7 @@
 <script>
 const copyText = (txt) => {
     $('#message').val(txt)
+    //alert(txt)
 }
 </script>
 <script>
@@ -81,9 +99,9 @@ $(document).ready(function(){
                 for (var key in response.messages)
                 {
                     if(response.messages[key].is_mine){
-                        var temp = "<div class='chat-log__item chat-log__item--own'><h3 class='chat-log__author'>"+response.messages[key].sender+" <small>"+response.messages[key].sent_at+"</small></h3> <div class='chat-log__message'>"+response.messages[key].message+"</div></div>"
+                        var temp = "<div class='chat-log__item chat-log__item--own'><h3 class='chat-log__author'>Me - <small style='font-size:11px'>"+response.messages[key].sent_at+"</small></h3> <div class='chat-log__message'>"+response.messages[key].message+"</div></div>"
                     } else {
-                        var temp = "<div class='chat-log__item'><h3 class='chat-log__author'>"+response.messages[key].sender+" <small>"+response.messages[key].sent_at+"</small></h3><div class='chat-log__message'>"+response.messages[key].message+"</div></div>"
+                        var temp = "<div class='chat-log__item'><h3 class='chat-log__author'>"+response.messages[key].sender+" - <small style='font-size:11px'>"+response.messages[key].sent_at+"</small></h3><div class='chat-log__message'>"+response.messages[key].message+"</div></div>"
                     }
                     $("#display").append(temp);
                 }

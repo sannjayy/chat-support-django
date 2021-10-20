@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Add chat template{% endblock title %}
+{% block content %}
+{% include 'navbar.html' %}
+
+
+<div class="container-fluid mt-5" style="margin-bottom:20%">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-6" style="border:1px solid #d9cfcf; padding:10px;margin-right:10px;">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="message" class="form-label">{{form.message.label}}</label>
+                    {{form.message}}
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">{{form.status.label}}</label>
+                    {{form.status}}
+                </div>               
+                <button type="submit" class="btn btn-primary">Add</button>
+                <a href="{% url 'core:dashboard' %}" class="btn btn-danger">Cancel</a>
+            </form>
+        </div>
+    <div>
+</div>
+
+{% endblock content %}

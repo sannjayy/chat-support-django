@@ -46,6 +46,15 @@
                 <a class="nav-link" href="{% url 'admin:index' %}">Admin Panel</a>
             </li>
         {% endif %}
+        {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'core:logout' %}">Logout</a>
+            </li>
+        {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'core:login' %}">Login</a>
+            </li>
+        {% endif %}
             
         
       </ul>
@@ -57,27 +66,41 @@
     <div class="d-flex align-items-center">     
 
       <!-- Notifications -->
-      {% comment %} <a
-        class="text-reset me-3 dropdown-toggle hidden-arrow"
-        href="#"
-        id="navbarDropdownMenuLink"
-        role="button"
-        data-mdb-toggle="dropdown"
-        aria-expanded="false"
-      >
-        <i class="fas fa-bell fa-lg"></i>
-        <span class="badge rounded-pill badge-notification bg-danger">1</span>
-      </a>
-      <ul
+        
+        {% if user.is_staff %}
+        <a
+            class="text-reset me-3 dropdown-toggle hidden-arrow"
+            href="#"
+            id="navbarDropdownMenuLink"
+            role="button"
+            data-mdb-toggle="dropdown"
+            aria-expanded="false"
+            >
+                          
+            <i class="fas fa-bell fa-lg"></i>                
+            {% comment %} {% if chat_sessions|length >= 1 %}   {% endcomment %}
+            <span class="badge rounded-pill badge-notification bg-danger" id="number_of_notificaion"></span>
+            {% comment %} {% endif %} {% endcomment %}
+        </a>
+        <ul
         class="dropdown-menu dropdown-menu-end"
         aria-labelledby="navbarDropdownMenuLink"
-      >
-        <li>
-          <a class="dropdown-item" href="#">Some news</a>
-        </li>
+        id="display_notifications"
+        >
+        {% comment %} {% if chat_sessions %}
+            {% for data in chat_sessions %}
+            <li>
+                <a class="dropdown-item" href="{% url 'core:dashboard' %}">New chat request from {{data.user.nickname|lower}}</a>
+            </li>
+            {% endfor %}
+        {% else %}
+            <li>
+                <a class="dropdown-item" href="#!">No notifications</a>
+            </li>
+        {% endif %} {% endcomment %}
         
-      </ul> {% endcomment %}
-
+        </ul>
+        {% endif %}
       <!-- Avatar -->
       <a
         class="dropdown-toggle d-flex align-items-center hidden-arrow"
@@ -119,3 +142,4 @@
   <!-- Container wrapper -->
 </nav>
 <!-- Navbar -->
+

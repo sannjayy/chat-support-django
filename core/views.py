@@ -8,23 +8,35 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from chat.models import Chat, ChatSession, ChatTemplate
-class HomePage(TemplateView):
+from .models import User
+
+
+# Home Page View
+class HomePageView(TemplateView):
     template_name = "core/home.html"
 
+    def get_context_data(self, **kwargs):
+        return super(HomePageView, self).get_context_data(**kwargs)
 
 
+# Dashboard View
 def DashboardView(request):
     chat_templates = ChatTemplate.objects.filter(user = request.user)
-    chat_sessions = ChatSession.objects.filter(agent = request.user, is_closed=False)
-
+    chat_sessions = ChatSession.objects.filter(is_closed=False)    
     context = {
         'chat_templates': chat_templates,
         'chat_sessions': chat_sessions,
     }
     return render(request, 'core/dashboard.html', context)
 
-
-# Authentication
+# Change Account Availability 
+def change_account_availability(request):
+    user = User.objects.get(username = request.user.username)
+    user.is_available = not user.is_available
+    user.save()
+    return redirect('core:dashboard')
+    
+# Authentication View
 class LoginUser(LoginView):
     authentication_form = LoginForm
     template_name = "core/login.html"
@@ -34,6 +46,7 @@ class LoginUser(LoginView):
         return super(LoginUser, self).dispatch(request, *args, **kwargs)
     
 
+# Password Change View
 @login_required
 def user_change_password(request):
     form = PasswordChangeForm(user=request.user)

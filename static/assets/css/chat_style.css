@@ -16,9 +16,11 @@ body {
 }
 
 .chat-log {
-	padding: 40px 0 114px;
+	/* padding: 40px 0 114px; */
+	padding: 40px 0 197px;
 	height: auto;
 	overflow: auto;
+    font-size: 14px;
 }
 .chat-log__item {
 	background: #fafafa;

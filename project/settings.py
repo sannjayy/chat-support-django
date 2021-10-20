@@ -1,4 +1,5 @@
 from pathlib import Path
+from django.contrib.messages import constants as messages
 from dotenv import load_dotenv, find_dotenv
 import os
 
@@ -111,6 +112,8 @@ STATICFILES_DIRS = [ BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Messages Tag Change
+MESSAGE_TAGS = { messages.ERROR:'danger'}
 
 # URL CONFIG
 LOGIN_URL = 'core:login'
