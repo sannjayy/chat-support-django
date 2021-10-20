@@ -20,6 +20,7 @@ class HomePageView(TemplateView):
 
 
 # Dashboard View
+@login_required
 def DashboardView(request):
     chat_templates = ChatTemplate.objects.filter(user = request.user)
     chat_sessions = ChatSession.objects.filter(is_closed=False)    
@@ -30,6 +31,7 @@ def DashboardView(request):
     return render(request, 'core/dashboard.html', context)
 
 # Change Account Availability 
+@login_required
 def change_account_availability(request):
     user = User.objects.get(username = request.user.username)
     user.is_available = not user.is_available
