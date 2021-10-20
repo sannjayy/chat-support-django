@@ -19,7 +19,7 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
     # List admin
-    list_display = ('username', 'email', 'full_name', 'is_email_verified', 'is_available', 'is_staff', 'date_joined', 'last_login')
+    list_display = ('username', 'email', 'full_name', 'is_available', 'is_staff', 'date_joined', 'last_login')
     list_filter = ('is_email_verified', 'is_active', 'is_staff', 'is_superuser')
     fieldsets = (
         ('User Credentials', {'fields': ('email', 'is_email_verified', 'username', 'password')}),
