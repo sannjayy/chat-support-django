@@ -9,7 +9,7 @@ class ChatAdmin(ImportExportModelAdmin):
 
 @admin.register(ChatSession)
 class ChatSessionAdmin(ImportExportModelAdmin):
-    list_display = ['user', 'agent', 'session', 'is_closed', 'created_at']
+    list_display = ['user', 'agent', 'session', 'is_closed', 'created_at', 'updated_at']
     list_per_page = 20
 
 @admin.register(ChatTemplate)

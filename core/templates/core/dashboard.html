@@ -7,17 +7,30 @@
     {% include 'navbar.html' %}
     <div class="container-fluid mt-5" style="margin-bottom:20%">
         <div class="row">
+            <div class="col-4 m-auto" id="new_notification_alert">
+                <div class="alert alert-danger text-center" role="alert">
+                    New Chat Request Received!
+                    <hr/>
+                    <a href="{% url 'core:dashboard' %}" class="btn btn-dark">Show Chat Request</a>
+                </div>
+            </div>
+            
+        </div>
+        <div class="row">
             <div class="col-md-12" style="border:1px solid #d9cfcf; padding:10px;margin-right:10px;">
                 <div class="col-2">
                     {% if user.is_available %}
                     <a href="{% url 'core:change_visibility_status' %}">                        
-                        <label class="btn btn-success" for="success-outlined">Avaiable</label>
+                        <label class="btn btn-success btn-sm" for="success-outlined">Avaiable</label>
                     </a>
                     {% else %}
                     <a href="{% url 'core:change_visibility_status' %}">       
-                        <label class="btn btn-danger" for="danger-outlined">Busy</label>
+                        <label class="btn btn-danger btn-sm" for="danger-outlined">Busy</label>
                     </a>
                     {% endif %}
+                    <a href="{% url 'core:dashboard' %}">       
+                        <label class="btn btn-dark btn-sm" for="danger-outlined">Refresh</label>
+                    </a>
                 </div>
             </div>
         <div>
@@ -55,15 +68,15 @@
                                 <td>
                                     
                                     {% if user.is_available and not chat.is_agent_joined %}
-                                        <a href="{% url 'chat:agent_join_chat' chat.session %}" class="btn btn-success" title="Join this conversation" >Accept &nbsp<i class="fas fa-check"></i></a>
+                                        <a href="{% url 'chat:agent_join_chat' chat.session %}" class="btn btn-success btn-sm" title="Join this conversation" >Accept &nbsp<i class="fas fa-check"></i></a>
 
-                                        <a href="{% url 'chat:end_chat' chat.session %}" class="btn btn-danger" title="End this conversation" onClick="return confirm('are you sure you want to reject this chat?');">Reject &nbsp<i class="fas fa-times"></i></a>
+                                        <a href="{% url 'chat:end_chat' chat.session %}" class="btn btn-danger btn-sm" title="End this conversation" onClick="return confirm('are you sure you want to reject this chat?');">Reject &nbsp<i class="fas fa-times"></i></a>
                                     {% endif %}
                                         
                                     {% if chat.is_agent_joined and chat.agent == user %}
-                                        <a href="{% url 'chat:end_chat' chat.session %}" class="btn btn-outline-danger" title="End this conversation" onClick="return confirm('are you sure you want to close this conversation?');">End Chat</a>
-                                    {% else %}
-                                        -
+                                        <a href="{% url 'chat:end_chat' chat.session %}" class="btn btn-outline-danger btn-sm" title="End this conversation" onClick="return confirm('are you sure you want to close this conversation?');">End Chat</a>
+                                    {% comment %} {% else %} {% endcomment %}
+                                        
                                     {% endif %}
                                     
                                 </td>

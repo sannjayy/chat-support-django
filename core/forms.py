@@ -10,8 +10,6 @@ class LoginForm(AuthenticationForm):
 	password = forms.CharField(label=_("Password"), strip=False, widget=forms.PasswordInput(attrs={'autocomplete': 'current-password', 'class':'form-control form-control-lg', 'placeholder':'Enter your password'}), error_messages={'required':'Enter a Correct Password'})
 
 
-
-
 # Admin User Creation Form
 class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
@@ -38,6 +36,7 @@ class UserCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
 
 # Admin User Change Form
 class UserChangeForm(forms.ModelForm):

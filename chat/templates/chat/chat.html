@@ -7,7 +7,10 @@
 {% block content %}
 <header class="page-header">
     <div class="container ">
-        <h4>qSupport <a href="{% url 'chat:end_chat' session.session %}" title="End this conversation"  onClick="return confirm('are you sure you want to close this conversation?');"><i class="far fa-window-close" style="color:#f74d4d"></i></a></h4>
+        <div class="d-flex justify-content-between">
+            <h4>Customer Chat Support</h4>
+            <a href="{% url 'chat:end_chat' session.session %}" title="End this conversation" onClick="return confirm('are you sure you want to close this conversation?');" class="btn btn-outline-danger"><i class="far fa-window-close"></i> Exit conversation</a>
+        </div>
         <small>
             {% if user.is_staff %}
                 <p>Chatting with : {{session.user.nickname}}
@@ -83,42 +86,10 @@ const copyText = (txt) => {
     //alert(txt)
 }
 </script>
-<script>
-$(document).ready(function(){
-    const url = window.location.href
-    const text = url.match(/\w+/g)
-    const session_id = text[text.length - 1];
-
-    setInterval(function(){
-        $.ajax({
-            type: 'GET',
-            url : "/chat/getMessages/"+session_id,
-            success: function(response){
-                //console.log(response);
-                $("#display").empty();
-                for (var key in response.messages)
-                {
-                    if(response.messages[key].is_mine){
-                        var temp = "<div class='chat-log__item chat-log__item--own'><h3 class='chat-log__author'>Me - <small style='font-size:11px'>"+response.messages[key].sent_at+"</small></h3> <div class='chat-log__message'>"+response.messages[key].message+"</div></div>"
-                    } else {
-                        var temp = "<div class='chat-log__item'><h3 class='chat-log__author'>"+response.messages[key].sender+" - <small style='font-size:11px'>"+response.messages[key].sent_at+"</small></h3><div class='chat-log__message'>"+response.messages[key].message+"</div></div>"
-                    }
-                    $("#display").append(temp);
-                }
-            },
-            error: function(response){
-                alert('An error occured')
-            }
-        });
-        window.scrollTo(0,document.body.scrollHeight);
-
-    }, 1000);
-})
-</script>
 <script type="text/javascript">
   $(document).on('submit','#post-form',function(e){
     e.preventDefault();
-
+    window.localStorage.setItem("is_my_reply", true);
     $.ajax({
       type:'POST',
       url:'/chat/sendMessage',
@@ -131,9 +102,78 @@ $(document).ready(function(){
         window.scrollTo(0,document.body.scrollHeight);
          //alert(data)
         //console.log(data)
+        
       }
     });
     document.getElementById('message').value = ''
   });
 </script>
+<script>
+$(document).ready(function(){
+    const url = window.location.href
+    const text = url.match(/\w+/g)
+    const session_id = text[text.length - 1];
+
+    const src = "{% static 'assets/sound/msg_tone.wav' %}";            
+    var audio = new Audio(src);
+
+    setInterval(function(){
+        $.ajax({
+            type: 'GET',
+            url : "/chat/getMessages/"+session_id,
+            success: function(response){
+                //console.log(response);
+                $("#display").empty();
+                let count = 0;
+                for (let key in response.messages)
+                {
+                    if(response.messages[key].is_mine){
+                        var temp = "<div class='chat-log__item chat-log__item--own'><h3 class='chat-log__author'>Me - <small style='font-size:11px'>"+response.messages[key].sent_at+"</small></h3> <div class='chat-log__message'>"+response.messages[key].message+"</div></div>"
+                        
+                    } else {
+                        var temp = "<div class='chat-log__item'><h3 class='chat-log__author'>"+response.messages[key].sender+" - <small style='font-size:11px'>"+response.messages[key].sent_at+"</small></h3><div class='chat-log__message'>"+response.messages[key].message+"</div></div>"
+                    }
+                    $("#display").append(temp);
+                    count = count + 1;
+                }
+
+                const last_notif = window.localStorage.getItem('chat_notification');
+                const isMe = window.localStorage.getItem('is_my_reply');
+                //console.log(last_notif)
+                //console.log(last_notif, count)
+                //console.log(isMe)
+                if (last_notif < count){
+                    
+                    
+                    //audio.play();
+                    //$("#new_notification_alert").show();
+                    if(isMe=='false'){
+                        //console.log('ALAERT SOUND!!!')
+                        audio.play();
+                    }
+                }
+                
+
+                if (count < 1){
+                    //console.log('if part')
+                    //$("#number_of_notificaion").hide();
+                    window.localStorage.setItem("chat_notification", 0);
+                } else {
+                    //console.log('else part')                            
+                    //$("#number_of_notificaion").show();
+                    //$("#number_of_notificaion").text(count);
+                    window.localStorage.setItem("chat_notification", count);
+                }
+                window.localStorage.setItem("is_my_reply", false);
+            },
+            error: function(response){
+                alert('An error occured')
+            }
+        });
+        window.scrollTo(0,document.body.scrollHeight);
+
+    }, 1500);
+})
+</script>
+
 {% endblock scripts %}

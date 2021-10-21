@@ -49,9 +49,11 @@
         <script>
         {% if user.is_staff %}
         $(document).ready(function(){
-            const src = "{% static 'assets/sound/notification.wav' %}";            
+            $("#new_notification_alert").hide();
+            const src = "{% static 'assets/sound/notification_tone.wav' %}";            
             var audio = new Audio(src);
-
+            audio.loop = true;
+            
             setInterval(function(){
                 $.ajax({
                     type: 'GET',
@@ -77,6 +79,7 @@
                         if (last_notif < count){
                             //console.log('alert')
                             audio.play();
+                            $("#new_notification_alert").show();
                         }
                         
 

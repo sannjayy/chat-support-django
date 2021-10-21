@@ -12,7 +12,8 @@ class ChatSession(models.Model):
     session = models.CharField(max_length=150, unique=True, blank=True)
     is_agent_joined = models.BooleanField(default=False)
     is_closed = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Exit Time')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Start Time')
 
     def save(self, *args, **kwargs):
         u = uuid.uuid4()
@@ -22,6 +23,9 @@ class ChatSession(models.Model):
 
     def __str__(self):
         return self.session
+    
+    class Meta:
+        ordering = ['-id']
 
 
 class Chat(models.Model):

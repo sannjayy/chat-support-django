@@ -1,10 +1,6 @@
 from django.contrib import admin
-from django import forms
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from django.core.exceptions import ValidationError
-from django.contrib.auth.models import Permission
 
 from .models import User
 from .forms import UserChangeForm, UserCreationForm
@@ -19,17 +15,18 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
     # List admin
-    list_display = ('username', 'email', 'full_name', 'is_available', 'is_staff', 'date_joined', 'last_login')
-    list_filter = ('is_email_verified', 'is_active', 'is_staff', 'is_superuser')
-    fieldsets = (
-        ('User Credentials', {'fields': ('email', 'is_email_verified', 'username', 'password')}),
+    list_display = ('username', 'email', 'nickname', 'is_available', 'is_staff', 'date_joined', 'last_login')
+    list_filter = ('is_email_verified', 'is_staff', 'is_superuser')
+    fieldsets = (        
         ('Personal info', {'fields': ('first_name', 'last_name','mobile', 'whatsapp',)}),
-        ('Permissions', {'fields': ('is_available', 'is_active', 'is_staff', 'is_superuser', 'groups')}), # 'user_permissions', 'groups'
+        ('User Credentials', {'fields': ('email', 'username', 'password')}),
+        ('Permissions', {'fields': ('is_staff', 'is_superuser')}), # 'user_permissions', 'groups'
     )
     # Creating new user from admin
     add_fieldsets = (
-        ('User Information', {'classes': ('wide',), 'fields': ('first_name', 'last_name', 'mobile', 'whatsapp', 'email', 'username', 'password1', 'password2',)}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
+        ('User Information', {'classes': ('wide',), 'fields': ('first_name', 'last_name', 'mobile', 'whatsapp', )}),
+        ('User Credentials', {'classes': ('wide',), 'fields': ('email', 'username', 'password1', 'password2',)}),
+        ('Permissions', {'fields': ('is_staff', 'is_superuser')}),
         
     )
     search_fields = ('email', 'first_name', 'username')
@@ -40,4 +37,4 @@ class UserAdmin(BaseUserAdmin):
 
 # User Admin Register
 admin.site.register(User, UserAdmin)
-admin.site.register(Permission)
+admin.site.unregister(Group)
