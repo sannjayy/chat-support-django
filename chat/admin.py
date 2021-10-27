@@ -14,5 +14,5 @@ class ChatSessionAdmin(ImportExportModelAdmin):
 
 @admin.register(ChatTemplate)
 class ChatTemplateAdmin(ImportExportModelAdmin):
-    list_display = ['user', 'message', 'status', 'created_at']
+    list_display = ['user', 'message', 'image', 'status', 'created_at']
     list_per_page = 20

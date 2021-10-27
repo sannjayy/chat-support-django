@@ -13,8 +13,7 @@
         </div>
         <small>
             {% if user.is_staff %}
-                <p>Chatting with : {{session.user.nickname}}
-                    
+                <p>Chatting with : {{session.user.nickname}}                    
                     {% if session.user.mobile %}
                         | {{session.user.mobile}} (Mobile)
                     {% endif %}
@@ -34,7 +33,7 @@
             {% if not session.agent %}
                 <p style="text-align:center; border:1px solid #8eb98e; width:50%; margin:0 auto;color: #787373;border-radius: 40px;">Please wait while we connect you to the next available agent...</p>
             {% else %}
-                <p style="text-align:center; border:1px solid #8eb98e; width:50%; margin:0 auto;color: #787373;border-radius: 40px;">You are chatting with {{session.agent.nickname}}</p>
+                <p style="text-align:center; border:1px solid #8eb98e; width:50%; margin:0 auto;color: #787373;border-radius: 40px;"><small>You are chatting with</small> <code>{{session.agent.nickname}}</code></p>
             {% endif %}
         {% endif %}
         <div class="chat-log" id="display">
@@ -57,19 +56,26 @@
             {% csrf_token %}
             <div class="row">
                 <div class="col-sm-10 col-xs-8">
-                    <input type="text" class="form-control" name="message" id="message" placeholder="Message" />
-                    {% comment %} <textarea name="message" id="message" class="form-control" placeholder="Message" cols="10" rows="1"></textarea> {% endcomment %}
+                    {% comment %} <input type="text" class="form-control" name="message" id="message" placeholder="Message" /> {% endcomment %}
+                    <textarea name="message" id="message" class="form-control" placeholder="Message" cols="10" rows="1"></textarea>
                 </div>
                 <div class="col-sm-2 col-xs-4">
-                    <button type="submit" class="btn btn-success btn-block">Send</button>
+                    <button type="submit" class="btn btn-success btn-block" id="send_button">Send</button>
                 </div>
             </div>
             
             {% if user.is_staff %}
             <div class="row">
                 {% for msg in chat_templates %}
-                <div class="col-sm-2 m-3" style="text-align:center; border:1px solid #8eb98e;padding: 5px; border-radius: 40px; font-size:14px">
-                   <a href="#!" onclick="copyText('{{msg|linebreaks}}')" style="color: #443939;">{{msg|truncatechars:'25'}}</a>
+                <div class="col-sm-2 m-3"  title="added on {{msg.created_at|date}}" style="text-align:center; border:1px solid #8eb98e;padding: 5px; border-radius: 40px; font-size:14px">
+                    <a href="#!" onclick="copyText(msg = '{{msg.message|linebreaks}}', image='{{msg.ImageUrl}}')" style="color: #443939;">
+                        {{msg|truncatechars:'19'}} 
+                        {% if msg.ImageUrl %}                            
+                            {% if not msg.message %}
+                            <code title="{{msg.created_at|timesince}}">{{msg.created_at|date}}</code>                               
+                            {% endif %}&nbsp<i class="fas fa-image"></i>
+                        {% endif %}
+                    </a>
                 </div>
                 {% endfor %}                
             </div>
@@ -81,20 +87,60 @@
 {% endblock content %}
 {% block scripts %}
 <script>
-const copyText = (txt) => {
-    $('#message').val(txt)
+{% if user.is_staff %}
+// Text Template
+const copyText = (msg, image) => {
+    //console.log(msg, image)
+    if(image){
+        $('#message').val(`<a href=${image} target="_blank"><img src=${image} class="img-thumbnail" style="height:370px" alt="image"></a><hr/><b>${msg}</b>`)
+    } else {
+        $('#message').val(`${msg}`)
+    }
+    
+    //$('#message').val(txt)
+    $('#send_button').click()
+    window.scrollTo(0,document.body.scrollHeight);
     //alert(txt)
 }
+{% endif %}
+
+// Text to Nl2br
+const nl2br = (str, replaceMode, isXhtml) => {
+    const breakTag = (isXhtml) ? '<br />' : '<br>';
+    const replaceStr = (replaceMode) ? '$1'+ breakTag : '$1'+ breakTag +'$2';
+    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, replaceStr);
+}
+// Enter to Submit
+document.getElementById('message').addEventListener('keypress', (e) => {
+    if (e.key == 'Enter' && !e.shiftKey) {
+        e.preventDefault()
+        //console.log('your code goes here');
+        $('#send_button').click()
+    }
+    //if (e.key == 'Enter' && e.shiftKey) {
+    // e.preventDefault();
+    // console.log("insertLineBreak");
+    //}
+})
+
+$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+    event.preventDefault();
+    $(this).ekkoLightbox();
+});
 </script>
 <script type="text/javascript">
   $(document).on('submit','#post-form',function(e){
     e.preventDefault();
+    message = $('#message').val()
+    if(message == "") {
+        return false
+    }
     window.localStorage.setItem("is_my_reply", true);
     $.ajax({
       type:'POST',
       url:'/chat/sendMessage',
       data:{
-            message:$('#message').val(),
+            message:nl2br(message),
             url: window.location.href,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
       },
@@ -174,6 +220,6 @@ $(document).ready(function(){
 
     }, 1500);
 })
-</script>
 
+</script>
 {% endblock scripts %}

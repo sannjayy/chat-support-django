@@ -1,8 +1,8 @@
 from django.db import models
 from core.models import User
-import uuid
 from django.utils import timezone
-import math
+import math, os, uuid, string
+from django.core.validators import FileExtensionValidator
 
 # Create your models here.
 
@@ -93,11 +93,33 @@ class Chat(models.Model):
                 return str(years) + " years ago"
 
 
+def get_file_path(instance, filename):
+    instance_name = instance._meta.model.__name__
+    parent_content_name = instance.user.nickname[:15].translate(str.maketrans('', '', string.punctuation)).replace(' ','-').lower()
+    upload_to = f'{instance_name.lower()}/{parent_content_name}'
+    ext = filename.split('.')[-1]
+    # get filename
+    gen_filename = filename[:17].replace(ext, '').replace('.', '')
+    filename = f"{gen_filename}.{ext}" if instance.pk else f"{uuid.uuid4().hex}.{ext}"
+    # return the whole path to the file
+    return os.path.join(upload_to, filename)
+
+
 class ChatTemplate(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    message = models.TextField()
+    message = models.TextField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True, upload_to=get_file_path, validators=[FileExtensionValidator(allowed_extensions=['jpg', 'png', 'jpeg'])], help_text='Allowed extensions: png & jpg')
     status = models.BooleanField(default=True)
+    use_count = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.message
+
+    @property
+    def ImageUrl(self):
+        try:
+            url = self.image.url
+        except :
+            url = ''
+        return url

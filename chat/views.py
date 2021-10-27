@@ -18,7 +18,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 @login_required
 def chat_view(request, id):
     # session = get_object_or_404(ChatSession, session=id)
-    chat_templates = ChatTemplate.objects.filter(user=request.user)
+    chat_templates = ChatTemplate.objects.filter(user=request.user).filter(status=True)
     try:
         session = ChatSession.objects.get(session=id, is_closed=False)
         if session:
@@ -48,11 +48,12 @@ def end_chat_view(request, id):
 
         # Send a Exit Message
         Chat.objects.create(
-            sender = request.user,
-            receiver_id = session.user_id,
-            session = session,
-            message = f'{request.user.nickname} left the chat', 
+            sender=request.user,
+            receiver_id=session.user_id,
+            session=session,
+            message='<p style="color:red; font-weight:bold">left the chat</p>',
         )
+
 
         if session and request.user.is_staff:
             return redirect('core:dashboard')
@@ -132,7 +133,7 @@ def SendAPIView(request):
     )
     if message:
         new_message.save()
-        time.sleep(0.5)
+        time.sleep(0.3)
     return HttpResponse('Message sent successfully')
 
 

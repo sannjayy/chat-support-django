@@ -6,13 +6,19 @@
 
 
 <div class="container-fluid mt-5" style="margin-bottom:20%">
+    {% include 'components/chat_notification.html' %}
     <div class="row d-flex justify-content-center">
         <div class="col-md-6" style="border:1px solid #d9cfcf; padding:10px;margin-right:10px;">
-            <form method="post">
+            <form method="post" enctype="multipart/form-data" novalidate>
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="message" class="form-label">{{form.message.label}}</label>
                     {{form.message}}
+                </div>
+                <div class="mb-3">
+                    <label for="image" class="form-label">{{form.image.label}}</label>
+                    {{form.image}}
+                    <code>Max size can be 2MB</code>
                 </div>
                 <div class="mb-3">
                     <label for="message" class="form-label">{{form.status.label}}</label>

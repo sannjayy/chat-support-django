@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Payment{% endblock title %}
+
+{% block head %}{% endblock head %}
+
+{% block content %}
+    {% include 'navbar.html' %}
+    <div class="container-fluid mt-5" style="margin-bottom:20%">
+        
+        {% include 'components/chat_notification.html' %}
+            
+        <div class="row">
+            <div class="col-md-12 m-auto">
+                <h3 class="font-weight-bold">Make online payment</h3>
+                <hr class="mt-2">
+                <p>Scan the QR Code make payment and send us a <code>screenshot</code>.</p>
+                <img src="{% static 'assets/img/qrcode.png' %}" class="rounded mx-auto d-block img-thumbnail" style="width:20%" alt="QR Code">
+                <h6 class="text-center mt-3">Company Name</h6>
+                {% comment %} <div class="alert alert-danger text-center" role="alert">
+                    New Chat Request Received!
+                    <hr/>
+                    <a href="{% url 'core:dashboard' %}" class="btn btn-dark">Show Chat Request</a>
+                </div> {% endcomment %}
+            </div>
+            <hr class="mt-2">
+            <p class="font-weight-bold">Tips!</p>
+            <p>Do not share any <code>OTP</code> with our customer care agents.</p>
+            
+        </div>       
+    </div>
+    {% comment %} {% include 'components/footer.html' %} {% endcomment %}
+{% endblock content %}
+

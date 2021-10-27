@@ -1,21 +1,15 @@
 {% extends 'base.html' %}
 {% block title %}Dashboard{% endblock title %}
 
-{% block head %}{% endblock head %}
+{% block head %}
+{% endblock head %}
 
 {% block content %}
     {% include 'navbar.html' %}
     <div class="container-fluid mt-5" style="margin-bottom:20%">
-        <div class="row">
-            <div class="col-4 m-auto" id="new_notification_alert">
-                <div class="alert alert-danger text-center" role="alert">
-                    New Chat Request Received!
-                    <hr/>
-                    <a href="{% url 'core:dashboard' %}" class="btn btn-dark">Show Chat Request</a>
-                </div>
-            </div>
-            
-        </div>
+    
+        {% include 'components/chat_notification.html' %}
+        
         <div class="row">
             <div class="col-md-12" style="border:1px solid #d9cfcf; padding:10px;margin-right:10px;">
                 <div class="col-2">
@@ -99,6 +93,7 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Message</th>
+                            <th scope="col">Image</th>
                             <th scope="col">Created</th>
                             <th scope="col">Handle</th>
                         </tr>
@@ -108,10 +103,25 @@
                     {% if chat_templates %}                   
                         
                         {% for data in chat_templates %}
-                            <tr>
+                            <tr style="vertical-align: middle;">
                                 <th scope="row">{{ forloop.counter }}</th>
-                                <td>{{data.message}}</td>
-                                <td>{{data.created_at|date}}</td>
+                                <td>
+                                    {% if data.message %}
+                                        {{data.message|linebreaks}}
+                                    {% else %}
+                                        No Message
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if data.ImageUrl %}
+                                        <a href="{{data.ImageUrl}}" target="_blank">
+                                            <img src="{{data.ImageUrl}}" class="img-thumbnail" style="height:100px" alt="chat image">
+                                        </a>
+                                    {% else %}
+                                        No Image
+                                    {% endif %}
+                                </td>
+                                <td title="{{data.created_at|timesince}} ago">{{data.created_at|date}}</td>
                                 <td>
                                     {% if data.status %}                                        
                                         <a href="{% url 'chat:change_template_status' data.id %}" title="Active">

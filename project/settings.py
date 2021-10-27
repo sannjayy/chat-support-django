@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Libs
     'import_export',
+    'django_cleanup.apps.CleanupConfig',
 
     # Local Apps
     'core',
